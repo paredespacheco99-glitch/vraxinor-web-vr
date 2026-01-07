@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Artist | Vraxinor</title>
+    <!-- Include Google Fonts: Varela Round for headings and Open Sans for body text -->
+    <link href="https://fonts.googleapis.com/css2?family=Varela+Round&family=Open+Sans:wght@300;400;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Social Icons (Placeholder for professional look) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        /* Definición de la paleta de colores del Idol */
+        :root {
+            --color-base-bg: #676767; /* Dark Gray (Site Base) */
+     --color-vivid-pink: #FF5487; /* Vivid Pink (Accent / CTA) */
+            --color-pale-pink: #FFBAC3; /* Pale Pink (Main Text Color) */
+            --color-dark-sidebar: #1E1E1E; /* Near Black for sidebar */
+            --color-container-bg: #383838; /* Background for the main content box */
+            --color-section-divider: #4a4a4a; /* Slightly lighter gray for separators */
+        }
+
+        /* Estilos Generales y Reset */
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: var(--color-base-bg);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            scroll-behavior: smooth; /* Smooth scroll para anclas que no usan JS */
+        }
+        
+        /* --- Sidebar Styles --- */
+        .sidebar {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            background-color: var(--color-dark-sidebar);
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .sidebar-header {
+            font-family: 'Varela Round', sans-serif;
+            color: var(--color-vivid-pink);
+            text-align: center;
+            padding: 8px;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar a {
+            padding: 10px 15px 10px 30px;
+            text-decoration: none;
+            font-size: 1.2rem;
+            color: var(--color-pale-pink);
+            display: block;
+            transition: 0.3s;
+            font-family: 'Varela Round', sans-serif;
+        }
+
+        .sidebar a:hover, .sidebar .active-link { /* Agregado .active-link para indicar la sección actual */
+            color: var(--color-vivid-pink);
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .sidebar .closebtn {
+            position: absolute;
+            top: 0;
+            right: 25px;
+            font-size: 36px;
+            margin-left: 50px;
+        }
+
+        .openbtn {
+            font-size: 30px;
+            cursor: pointer;
+            background-color: transparent;
+            color: var(--color-pale-pink);
+            padding: 10px 15px;
+            border: none;
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 999;
+            transition: color 0.3s;
+        }
+
+        .openbtn:hover {
+            color: var(--color-vivid-pink);
+        }
+
+        .main-content {
+            transition: margin-left .5s;
+            padding: 20px;
+            margin-left: 0; 
+        }
+
+        /* --- Contenedor Principal y Split-Layout --- */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+            border-radius: 12px;
+            background-color: var(--color-container-bg);
+            color: var(--color-pale-pink);
+        }
+
+        /* Estilos para el diseño de dos columnas (Flexbox) */
+        .bio-content {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .bio-left {
+            flex: 0 0 300px; 
+            max-width: 100%;
+            text-align: center;
+        }
+
+        .bio-right {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        /* Estilos de la Imagen del Idol */
+        .idol-image {
+            width: 100%;
+            height: auto;
+            border-radius: 50%;
+            border: 4px solid var(--color-vivid-pink);
+            object-fit: cover;
+            box-shadow: 0 0 15px var(--color-vivid-pink);
+            margin-bottom: 30px;
+        }
+
+        /* Estilos de las Estadísticas Clave */
+        .stats-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+            border-top: 1px solid var(--color-section-divider);
+            padding-top: 15px;
+        }
+
+        .stat-item {
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .stat-item strong {
+            color: var(--color-vivid-pink);
+            font-family: 'Varela Round', sans-serif;
+            display: inline-block;
+            width: 150px;
+        }
+        
+        /* Estilos de Redes Sociales */
+        .social-links {
+            margin-top: 20px;
+            border-top: 1px solid var(--color-section-divider);
+            padding-top: 20px;
+        }
+        
+        .social-links h3 {
+            font-family: 'Varela Round', sans-serif;
+            color: var(--color-pale-pink);
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .social-links a {
+            color: var(--color-pale-pink);
+            margin: 0 10px;
+            font-size: 1.8rem;
+            transition: color 0.3s;
+        }
+
+        .social-links a:hover {
+            color: var(--color-vivid-pink);
+        }
+
+
+        /* Títulos y Acordeón */
+        h1 { 
+            font-family: 'Varela Round', sans-serif;
+            font-size: 2.8rem;
+            text-align: center;
+            color: var(--color-vivid-pink);
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            letter-spacing: 3px;
+        }
+
+        h2 { 
+            font-family: 'Varela Round', sans-serif;
+            font-size: 1.5rem;
+            color: var(--color-pale-pink);
+            border-bottom: 2px solid var(--color-vivid-pink);
+            padding-bottom: 10px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+        
+        /* Acordeón Styles (Simplified for brevity) */
+        .accordion-item { border: 1px solid var(--color-pale-pink); border-radius: 8px; margin-bottom: 15px; overflow: hidden; background-color: #4a4a4a; }
+        .accordion-header { font-family: 'Varela Round', sans-serif; background-color: var(--color-vivid-pink); color: white; padding: 15px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 1.1rem; transition: background-color 0.3s; }
+        .accordion-header:hover { background-color: #e44d7d; }
+        .accordion-icon { font-size: 1.5rem; line-height: 1; transition: transform 0.3s; }
+        .accordion-content { padding: 0 20px; max-height: 0; overflow: hidden; transition: max-height 0.4s ease-in-out; }
+        .accordion-content p { padding: 15px 0; line-height: 1.6; color: var(--color-pale-pink); background-color: #383838;}
+        .accordion-item.active .accordion-icon { transform: rotate(45deg); }
+
+
+        /* Media query para Responsividad */
+        @media screen and (max-width: 900px) {
+            .bio-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+            .bio-left {
+                flex: none;
+                max-width: 100%;
+                order: -1;
+            }
+            .stat-item strong {
+                width: 100px;
+            }
+        }
+        @media screen and (max-width: 768px) {
+            .sidebar { padding-top: 15px; }
+            .sidebar a { font-size: 1rem; }
+            .sidebar-header { font-size: 1.2rem; }
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- 1. Sidebar -->
+<div id="mySidebar" class="sidebar">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <div class="sidebar-header">Vraxi Menu</div>
+    <!-- ENLACE PARA DESPLAZARSE A LA SECCIÓN DE BIO -->
+    <a href="#artist-bio-section" class="active-link" onclick="closeNav(); smoothScroll('artist-bio-section');">Artista (lore)</a>
+    <a href="#latest-news-section" onclick="closeNav(); smoothScroll('latest-news-section');">Noticias</a>
+    <a href="#">Multimedia</a>
+    <a href="#">Contact</a>
+</div>
+
+<!-- 2. Botón para Abrir el Menú -->
+<button class="openbtn" onclick="openNav()">&#9776;</button>
+
+<!-- 3. Contenido Principal (Bio y LORE) -->
+<div id="main" class="main-content">
+    
+    <!-- SECCIÓN DE BIOGRAFÍA/LORE (DESTINO DEL ENLACE) -->
+    <div class="container" id="artist-bio-section">
+        <h1> Vraxinor: VR</h1>
+
+        <!-- DIV CRUCIAL: Contenedor para las dos columnas (bio-left y bio-right) -->
+        <div class="bio-content">
+            
+            <!-- Columna Izquierda: Imagen y Redes Sociales -->
+            <div class="bio-left">
+                <img src="https://placehold.co/300x300/FF5487/ffffff?text=IDOL+IMAGE" alt="Main image of the virtual idol" class="idol-image">
+
+                <div class="social-links">
+                    <h3>Sigueme</h3>
+                    <a href="https://www.tiktok.com/" target="_blank" title="TikTok"><i class="fab fa-tiktok"></i></a>
+                    <a href="https://www.youtube.com/@Vraxinor" target="_blank"><i class="fab fa-youtube"></i></a>
+                    <a href="https://www.twitter.com/" target="_blank"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.twitch.tv/" target="_blank"><i class="fab fa-twitch"></i></a>
+                    <a href="https://www.discord.com/" target="_blank"><i class="fab fa-discord"></i></a>
+                </div>
+            </div>
+
+            <!-- Columna Derecha: Resumen, Stats y LORE -->
+            <div class="bio-right">
+                
+                <h2>Biographical Summary</h2>
+                <p>
+                    Vraxinor es una entidad virtual creada para entretener y cautivar a su audiencia con su carisma unico y habilidades excepcionales.
+                </p>
+
+                <h2>Key Statistics</h2>
+                <ul class="stats-list">
+                    <li class="stat-item"><strong>Nacimiento:</strong> Marzo 7, [año]</li>
+                    <li class="stat-item"><strong>Afiliacion:</strong> Sector 7 (independiente)</li>
+                    <li class="stat-item"><strong>Height:</strong> 165 cm (5'5")</li>
+                    <li class="stat-item"><strong>Likes:</strong> Debugging code, bubble tea, retro synthwave music.</li>
+                    <li class="stat-item"><strong>Dislikes:</strong> Glitches, unexpected system restarts, silence.</li>
+                </ul>
+
+                <h2>Historia</h2>
+
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        Capitulo 1: El origen
+                        <span class="accordion-icon">+</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>
+                            Inicio de Vraxinor
+                        </p>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        Capitulo 2: La dualidad de Vraxi
+                        <span class="accordion-icon">+</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>
+                            La musica de Vraxi no es solo entretenimiento
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div> <!-- CIERRE DEL bio-content -->
+    </div>
+    
+    <!-- SECCIÓN DE NOTICIAS (DESTINO DEL SCROLL) -->
+    <div class="container" id="latest-news-section" style="margin-top: 80px;">
+        <h2>Vraxinor Latest News (Coming Soon)</h2>
+        <p>This section will contain blog posts, stream announcements, and official updates.</p>
+        
+        <!-- Bloque de RELLENO (Placeholder) para asegurar que la página pueda hacer scroll -->
+        <div style="min-height: 100vh; background-color: #2c2c2c; padding: 30px; border-radius: 8px; margin-top: 30px; display: flex; justify-content: center; align-items: center; text-align: center; border: 2px dashed var(--color-vivid-pink);">
+            <p style="color: var(--color-pale-pink); font-size: 1.2rem; font-family: 'Varela Round', sans-serif;">
+                --- ESPACIO DE RELLENO ACTIVO ---<br>
+                Este bloque se añadió para hacer la página lo suficientemente larga y poder probar la navegación interna (smoothScroll) correctamente.<br>
+                ¡Ahora la barra lateral debería funcionar visiblemente!
+            </p>
+        </div>
+    </div>
+    
+</div>
+
+<script>
+    const sidebarWidth = "250px"; 
+    
+    /**
+     * @param {string} targetId The ID of the element to scroll to (e.g., 'artist-bio-section')
+     * Función: Smooth Scroll para desplazarse suavemente al destino.
+     */
+    function smoothScroll(targetId) {
+        const targetElement = document.getElementById(targetId);
+        if (targetElement) {
+            window.scrollTo({
+                top: targetElement.offsetTop - 20, // 20px de padding arriba
+                behavior: 'smooth'
+            });
+        }
+    }
+
+    function openNav() {
+        document.getElementById("mySidebar").style.width = sidebarWidth;
+        if (window.innerWidth > 768) {
+            document.getElementById("main").style.marginLeft = sidebarWidth;
+        }
+    }
+
+    function closeNav() {
+        document.getElementById("mySidebar").style.width = "0";
+        document.getElementById("main").style.marginLeft = "0";
+    }
+
+    function toggleAccordion(header) {
+        const item = header.parentElement;
+        const content = item.querySelector('.accordion-content');
+        
+        // Cierra todos los demás acordeones
+        document.querySelectorAll('.accordion-item.active').forEach(openItem => {
+            if (openItem !== item) {
+                openItem.classList.remove('active');
+                openItem.querySelector('.accordion-content').style.maxHeight = 0;
+            }
+        });
+
+        // Abre o cierra el acordeón actual
+        item.classList.toggle('active');
+
+        if (item.classList.contains('active')) {
+            content.style.maxHeight = content.scrollHeight + "px";
+        } else {
+            content.style.maxHeight = 0;
+        }
+    }
+
+    // Asegura que la barra lateral y el contenido principal se ajusten si el usuario redimensiona
+    window.addEventListener('resize', () => {
+        const sidebar = document.getElementById("mySidebar");
+        if (sidebar.style.width === sidebarWidth && window.innerWidth > 900) {
+             document.getElementById("main").style.marginLeft = sidebarWidth;
+        } else {
+             document.getElementById("main").style.marginLeft = "0";
+        }
+    });
+
+</script>
+
+</body>
+</html>
