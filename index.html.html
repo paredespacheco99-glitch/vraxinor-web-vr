@@ -1,418 +1,378 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Artist | Vraxinor</title>
-    <!-- Include Google Fonts: Varela Round for headings and Open Sans for body text -->
+    <title>Vraxinor | Portal Neural</title>
+    
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Varela+Round&family=Open+Sans:wght@300;400;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome for Social Icons (Placeholder for professional look) -->
+    <!-- Font Awesome (Iconos Sociales) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
     <style>
-        /* Definición de la paleta de colores del Idol */
         :root {
-            --color-base-bg: #676767; /* Dark Gray (Site Base) */
-     --color-vivid-pink: #FF5487; /* Vivid Pink (Accent / CTA) */
-            --color-pale-pink: #FFBAC3; /* Pale Pink (Main Text Color) */
-            --color-dark-sidebar: #1E1E1E; /* Near Black for sidebar */
-            --color-container-bg: #383838; /* Background for the main content box */
-            --color-section-divider: #4a4a4a; /* Slightly lighter gray for separators */
+            --primary: #FF5487;
+            --bg-dark: #080808;
+            --text-color: #ffffff;
+            --sidebar-bg: #111111;
+            --glass: rgba(255, 255, 255, 0.05);
         }
 
-        /* Estilos Generales y Reset */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
             font-family: 'Open Sans', sans-serif;
-            background-color: var(--color-base-bg);
-            margin: 0;
-            padding: 0;
+            background-color: var(--bg-dark);
+            color: var(--text-color);
             overflow-x: hidden;
-            scroll-behavior: smooth; /* Smooth scroll para anclas que no usan JS */
+            background: radial-gradient(circle at center, #1a0b10 0%, #080808 100%);
         }
-        
-        /* --- Sidebar Styles --- */
+
+        /* --- BACKGROUND ANIMATION (CANVAS) --- */
+        #neural-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* --- SIDEBAR (MÁS RÁPIDA) --- */
         .sidebar {
             height: 100%;
             width: 0;
             position: fixed;
-            z-index: 1000;
+            z-index: 2000;
             top: 0;
             left: 0;
-            background-color: var(--color-dark-sidebar);
+            background-color: var(--sidebar-bg);
             overflow-x: hidden;
-            transition: 0.5s;
+            transition: 0.2s; /* Sidebar rápida */
             padding-top: 60px;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.7);
+            border-right: 1px solid rgba(255, 84, 135, 0.2);
         }
 
-        .sidebar-header {
-            font-family: 'Varela Round', sans-serif;
-            color: var(--color-vivid-pink);
-            text-align: center;
-            padding: 8px;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
         .sidebar a {
-            padding: 10px 15px 10px 30px;
+            padding: 15px 30px;
             text-decoration: none;
-            font-size: 1.2rem;
-            color: var(--color-pale-pink);
+            font-size: 1.1rem;
+            color: #ccc;
             display: block;
-            transition: 0.3s;
+            transition: 0.2s;
             font-family: 'Varela Round', sans-serif;
+            border-left: 0px solid var(--primary);
         }
 
-        .sidebar a:hover, .sidebar .active-link { /* Agregado .active-link para indicar la sección actual */
-            color: var(--color-vivid-pink);
-            background-color: rgba(255, 255, 255, 0.05);
+        .sidebar a:hover {
+            color: var(--primary);
+            background: rgba(255, 84, 135, 0.05);
+            border-left: 4px solid var(--primary);
         }
 
-        .sidebar .closebtn {
+        .closebtn {
             position: absolute;
-            top: 0;
+            top: 10px;
             right: 25px;
             font-size: 36px;
-            margin-left: 50px;
+            color: var(--primary) !important;
+            cursor: pointer;
         }
 
         .openbtn {
-            font-size: 30px;
+            font-size: 25px;
             cursor: pointer;
-            background-color: transparent;
-            color: var(--color-pale-pink);
+            background: var(--glass);
+            color: var(--primary);
             padding: 10px 15px;
-            border: none;
+            border: 1px solid rgba(255, 84, 135, 0.3);
+            border-radius: 0 10px 10px 0;
             position: fixed;
-            top: 10px;
-            left: 10px;
-            z-index: 999;
-            transition: color 0.3s;
+            top: 20px;
+            left: 0;
+            z-index: 1500;
+            backdrop-filter: blur(5px);
         }
 
-        .openbtn:hover {
-            color: var(--color-vivid-pink);
-        }
-
+        /* --- CONTENIDO PRINCIPAL --- */
         .main-content {
-            transition: margin-left .5s;
+            transition: margin-left 0.2s;
+            position: relative;
+            z-index: 10;
             padding: 20px;
-            margin-left: 0; 
         }
 
-        /* --- Contenedor Principal y Split-Layout --- */
         .container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 30px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
-            border-radius: 12px;
-            background-color: var(--color-container-bg);
-            color: var(--color-pale-pink);
+            max-width: 1100px;
+            margin: 60px auto;
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
 
-        /* Estilos para el diseño de dos columnas (Flexbox) */
-        .bio-content {
+        h1, h2 {
+            font-family: 'Varela Round', sans-serif;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-bottom: 20px;
+        }
+
+        .hero-section {
             display: flex;
+            align-items: center;
             gap: 40px;
             flex-wrap: wrap;
         }
 
-        .bio-left {
-            flex: 0 0 300px; 
-            max-width: 100%;
-            text-align: center;
-        }
-
-        .bio-right {
-            flex: 1;
-            min-width: 300px;
-        }
-
-        /* Estilos de la Imagen del Idol */
-        .idol-image {
-            width: 100%;
-            height: auto;
+        .avatar-img {
+            width: 250px;
+            height: 250px;
             border-radius: 50%;
-            border: 4px solid var(--color-vivid-pink);
+            border: 3px solid var(--primary);
+            box-shadow: 0 0 20px rgba(255, 84, 135, 0.4);
             object-fit: cover;
-            box-shadow: 0 0 15px var(--color-vivid-pink);
-            margin-bottom: 30px;
+            animation: float 5s ease-in-out infinite;
         }
 
-        /* Estilos de las Estadísticas Clave */
-        .stats-list {
-            list-style: none;
-            padding: 0;
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .social-bar {
+            display: flex;
+            gap: 20px;
             margin-top: 20px;
-            border-top: 1px solid var(--color-section-divider);
-            padding-top: 15px;
         }
 
-        .stat-item {
-            margin-bottom: 10px;
-            font-size: 1rem;
-        }
-
-        .stat-item strong {
-            color: var(--color-vivid-pink);
-            font-family: 'Varela Round', sans-serif;
-            display: inline-block;
-            width: 150px;
-        }
-        
-        /* Estilos de Redes Sociales */
-        .social-links {
-            margin-top: 20px;
-            border-top: 1px solid var(--color-section-divider);
-            padding-top: 20px;
-        }
-        
-        .social-links h3 {
-            font-family: 'Varela Round', sans-serif;
-            color: var(--color-pale-pink);
-            margin-bottom: 15px;
-            font-size: 1.2rem;
-        }
-
-        .social-links a {
-            color: var(--color-pale-pink);
-            margin: 0 10px;
+        .social-bar a {
+            color: white;
             font-size: 1.8rem;
-            transition: color 0.3s;
+            transition: 0.3s;
         }
 
-        .social-links a:hover {
-            color: var(--color-vivid-pink);
+        .social-bar a:hover {
+            color: var(--primary);
+            transform: scale(1.2);
         }
 
-
-        /* Títulos y Acordeón */
-        h1 { 
-            font-family: 'Varela Round', sans-serif;
-            font-size: 2.8rem;
-            text-align: center;
-            color: var(--color-vivid-pink);
-            text-transform: uppercase;
-            margin-bottom: 30px;
-            letter-spacing: 3px;
-        }
-
-        h2 { 
-            font-family: 'Varela Round', sans-serif;
-            font-size: 1.5rem;
-            color: var(--color-pale-pink);
-            border-bottom: 2px solid var(--color-vivid-pink);
-            padding-bottom: 10px;
+        /* --- SECCIÓN NOTICIAS --- */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
             margin-top: 30px;
-            margin-bottom: 20px;
-        }
-        
-        /* Acordeón Styles (Simplified for brevity) */
-        .accordion-item { border: 1px solid var(--color-pale-pink); border-radius: 8px; margin-bottom: 15px; overflow: hidden; background-color: #4a4a4a; }
-        .accordion-header { font-family: 'Varela Round', sans-serif; background-color: var(--color-vivid-pink); color: white; padding: 15px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 1.1rem; transition: background-color 0.3s; }
-        .accordion-header:hover { background-color: #e44d7d; }
-        .accordion-icon { font-size: 1.5rem; line-height: 1; transition: transform 0.3s; }
-        .accordion-content { padding: 0 20px; max-height: 0; overflow: hidden; transition: max-height 0.4s ease-in-out; }
-        .accordion-content p { padding: 15px 0; line-height: 1.6; color: var(--color-pale-pink); background-color: #383838;}
-        .accordion-item.active .accordion-icon { transform: rotate(45deg); }
-
-
-        /* Media query para Responsividad */
-        @media screen and (max-width: 900px) {
-            .bio-content {
-                flex-direction: column;
-                gap: 20px;
-            }
-            .bio-left {
-                flex: none;
-                max-width: 100%;
-                order: -1;
-            }
-            .stat-item strong {
-                width: 100px;
-            }
-        }
-        @media screen and (max-width: 768px) {
-            .sidebar { padding-top: 15px; }
-            .sidebar a { font-size: 1rem; }
-            .sidebar-header { font-size: 1.2rem; }
         }
 
+        .news-item {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: 0.3s;
+        }
+
+        .news-item:hover {
+            background: rgba(255, 84, 135, 0.05);
+            transform: translateY(-5px);
+        }
+
+        .news-date {
+            font-size: 0.8rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .hero-section { flex-direction: column; text-align: center; }
+            .container { padding: 20px; }
+        }
     </style>
 </head>
 <body>
 
-<!-- 1. Sidebar -->
-<div id="mySidebar" class="sidebar">
-    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-    <div class="sidebar-header">Vraxi Menu</div>
-    <!-- ENLACE PARA DESPLAZARSE A LA SECCIÓN DE BIO -->
-    <a href="#artist-bio-section" class="active-link" onclick="closeNav(); smoothScroll('artist-bio-section');">Artista (lore)</a>
-    <a href="#latest-news-section" onclick="closeNav(); smoothScroll('latest-news-section');">Noticias</a>
-    <a href="#">Multimedia</a>
-    <a href="#">Contact</a>
-</div>
+    <!-- Red Neuronal de Fondo -->
+    <canvas id="neural-canvas"></canvas>
 
-<!-- 2. Botón para Abrir el Menú -->
-<button class="openbtn" onclick="openNav()">&#9776;</button>
+    <!-- Sidebar Botón -->
+    <button class="openbtn" onclick="openNav()">&#9776;</button>
 
-<!-- 3. Contenido Principal (Bio y LORE) -->
-<div id="main" class="main-content">
-    
-    <!-- SECCIÓN DE BIOGRAFÍA/LORE (DESTINO DEL ENLACE) -->
-    <div class="container" id="artist-bio-section">
-        <h1> Vraxinor: VR</h1>
-
-        <!-- DIV CRUCIAL: Contenedor para las dos columnas (bio-left y bio-right) -->
-        <div class="bio-content">
-            
-            <!-- Columna Izquierda: Imagen y Redes Sociales -->
-            <div class="bio-left">
-                <img src="vraxinor-avatar.png.webp" alt="Vraxinor Avatar" class="idol-image">
-
-                <div class="social-links">
-                    <h3>Sigueme</h3>
-                    <a href="https://www.tiktok.com/@vraxinor" target="_blank" title="TikTok"><i class="fab fa-tiktok"></i></a>
-                    <a href="https://www.youtube.com/@Vraxinor" target="_blank"><i class="fab fa-youtube"></i></a>
-                    <a href="https://www.twitter.com/Vraxinor" target="_blank"><i class="fab fa-twitter"></i></a>
-                    <a href="https://www.twitch.tv/vraxinor" target="_blank"><i class="fab fa-twitch"></i></a>
-                    <a href="https://discord.gg/qbNYf6QF" target="_blank"><i class="fab fa-discord"></i></a>
-                </div>
-            </div>
-
-            <!-- Columna Derecha: Resumen, Stats y LORE -->
-            <div class="bio-right">
-                
-                <h2>Biographical Summary</h2>
-                <p>
-                    Vraxinor es una entidad virtual creada para entretener y cautivar a su audiencia con su carisma unico y habilidades excepcionales.
-                </p>
-
-                <h2>Key Statistics</h2>
-                <ul class="stats-list">
-                    <li class="stat-item"><strong>Nacimiento:</strong> Marzo 7, [año]</li>
-                    <li class="stat-item"><strong>Afiliacion:</strong> Sector 7 (independiente)</li>
-                    <li class="stat-item"><strong>Height:</strong> 165 cm (5'5")</li>
-                    <li class="stat-item"><strong>Likes:</strong> Debugging code, bubble tea, retro synthwave music.</li>
-                    <li class="stat-item"><strong>Dislikes:</strong> Glitches, unexpected system restarts, silence.</li>
-                </ul>
-
-                <h2>Historia</h2>
-
-                <div class="accordion-item">
-                    <div class="accordion-header" onclick="toggleAccordion(this)">
-                        Capitulo 1: El origen
-                        <span class="accordion-icon">+</span>
-                    </div>
-                    <div class="accordion-content">
-                        <p>
-                            Inicio de Vraxinor
-                        </p>
-                    </div>
-                </div>
-
-                <div class="accordion-item">
-                    <div class="accordion-header" onclick="toggleAccordion(this)">
-                        Capitulo 2: La dualidad de Vraxi
-                        <span class="accordion-icon">+</span>
-                    </div>
-                    <div class="accordion-content">
-                        <p>
-                            La musica de Vraxi no es solo entretenimiento
-                        </p>
-                    </div>
-                </div>
-
-            </div>
-        </div> <!-- CIERRE DEL bio-content -->
+    <!-- Sidebar Menú -->
+    <div id="mySidebar" class="sidebar">
+        <span class="closebtn" onclick="closeNav()">&times;</span>
+        <a href="#inicio" onclick="closeNav()">Inicio</a>
+        <a href="#noticias" onclick="closeNav()">Noticias</a>
+        <a href="#lore" onclick="closeNav()">Lore</a>
+        <a href="#social" onclick="closeNav()">Contacto</a>
     </div>
-    
-    <!-- SECCIÓN DE NOTICIAS (DESTINO DEL SCROLL) -->
-    <div class="container" id="latest-news-section" style="margin-top: 80px;">
-        <h2>Vraxinor Latest News (Coming Soon)</h2>
-        <p>This section will contain blog posts, stream announcements, and official updates.</p>
+
+    <!-- Contenido -->
+    <div id="main" class="main-content">
         
-        <!-- Bloque de RELLENO (Placeholder) para asegurar que la página pueda hacer scroll -->
-        <div style="min-height: 100vh; background-color: #2c2c2c; padding: 30px; border-radius: 8px; margin-top: 30px; display: flex; justify-content: center; align-items: center; text-align: center; border: 2px dashed var(--color-vivid-pink);">
-            <p style="color: var(--color-pale-pink); font-size: 1.2rem; font-family: 'Varela Round', sans-serif;">
-                --- ESPACIO DE RELLENO ACTIVO ---<br>
-                Este bloque se añadió para hacer la página lo suficientemente larga y poder probar la navegación interna (smoothScroll) correctamente.<br>
-                ¡Ahora la barra lateral debería funcionar visiblemente!
-            </p>
+        <!-- Sección Perfil -->
+        <div class="container" id="inicio">
+            <div class="hero-section">
+                <img src="vraxinor.png" alt="Vraxinor" class="avatar-img" onerror="this.src='https://placehold.co/400x400/FF5487/ffffff?text=VRAXINOR'">
+                <div class="info">
+                    <h1>VRAXINOR</h1>
+                    <p style="color: #aaa; margin-bottom: 15px;">Entidad Digital // Versión 2.0</p>
+                    <p>Bienvenido al núcleo de datos. Aquí podrás encontrar toda la información sobre mi lore, actualizaciones de sistema y transmisiones activas.</p>
+                    
+                    <div class="social-bar" id="social">
+                        <a href="#"><i class="fab fa-tiktok"></i></a>
+                        <a href="#"><i class="fab fa-twitch"></i></a>
+                        <a href="#"><i class="fab fa-x-twitter"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
         </div>
+
+        <!-- Sección Noticias -->
+        <div class="container" id="noticias">
+            <h2>Noticias del Sistema</h2>
+            <div class="news-grid">
+                <div class="news-item">
+                    <span class="news-date">7 Enero, 2026</span>
+                    <h3>Nueva Actualización Neural</h3>
+                    <p>Se ha implementado el protocolo de partículas interactivas para una mejor inmersión del usuario.</p>
+                </div>
+                <div class="news-item">
+                    <span class="news-date">5 Enero, 2026</span>
+                    <h3>Evento de Streaming</h3>
+                    <p>Próxima transmisión de depuración de código en vivo este fin de semana.</p>
+                </div>
+                <div class="news-item">
+                    <span class="news-date">1 Enero, 2026</span>
+                    <h3>Feliz Año 2026</h3>
+                    <p>Vraxinor ha completado un ciclo más de procesamiento. Gracias por seguir aquí.</p>
+                </div>
+            </div>
+        </div>
+
     </div>
-    
-</div>
 
-<script>
-    const sidebarWidth = "250px"; 
-    
-    /**
-     * @param {string} targetId The ID of the element to scroll to (e.g., 'artist-bio-section')
-     * Función: Smooth Scroll para desplazarse suavemente al destino.
-     */
-    function smoothScroll(targetId) {
-        const targetElement = document.getElementById(targetId);
-        if (targetElement) {
-            window.scrollTo({
-                top: targetElement.offsetTop - 20, // 20px de padding arriba
-                behavior: 'smooth'
-            });
-        }
-    }
-
-    function openNav() {
-        document.getElementById("mySidebar").style.width = sidebarWidth;
-        if (window.innerWidth > 768) {
-            document.getElementById("main").style.marginLeft = sidebarWidth;
-        }
-    }
-
-    function closeNav() {
-        document.getElementById("mySidebar").style.width = "0";
-        document.getElementById("main").style.marginLeft = "0";
-    }
-
-    function toggleAccordion(header) {
-        const item = header.parentElement;
-        const content = item.querySelector('.accordion-content');
-        
-        // Cierra todos los demás acordeones
-        document.querySelectorAll('.accordion-item.active').forEach(openItem => {
-            if (openItem !== item) {
-                openItem.classList.remove('active');
-                openItem.querySelector('.accordion-content').style.maxHeight = 0;
+    <script>
+        // --- LÓGICA DE LA SIDEBAR ---
+        function openNav() {
+            document.getElementById("mySidebar").style.width = "250px";
+            if (window.innerWidth > 768) {
+                document.getElementById("main").style.marginLeft = "250px";
             }
+        }
+
+        function closeNav() {
+            document.getElementById("mySidebar").style.width = "0";
+            document.getElementById("main").style.marginLeft = "0";
+        }
+
+        // --- ANIMACIÓN DE PARTÍCULAS (NEURAL) ---
+        const canvas = document.getElementById('neural-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        const mouse = { x: null, y: null, radius: 150 };
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = (Math.random() - 0.5) * 0.5;
+                this.speedY = (Math.random() - 0.5) * 0.5;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x > canvas.width || this.x < 0) this.speedX *= -1;
+                if (this.y > canvas.height || this.y < 0) this.speedY *= -1;
+
+                if (mouse.x !== null) {
+                    let dx = mouse.x - this.x;
+                    let dy = mouse.y - this.y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < mouse.radius) {
+                        this.x -= dx / 100;
+                        this.y -= dy / 100;
+                    }
+                }
+            }
+
+            draw() {
+                ctx.fillStyle = 'rgba(255, 84, 135, 0.6)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function init() {
+            particles = [];
+            let particleCount = (canvas.width * canvas.height) / 10000;
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function connect() {
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i; j < particles.length; j++) {
+                    let dx = particles[i].x - particles[j].x;
+                    let dy = particles[i].y - particles[j].y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 150) {
+                        let opacity = 1 - (distance / 150);
+                        ctx.strokeStyle = `rgba(255, 84, 135, ${opacity * 0.15})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let p of particles) {
+                p.update();
+                p.draw();
+            }
+            connect();
+            requestAnimationFrame(animate);
+        }
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            init();
+        }
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
         });
 
-        // Abre o cierra el acordeón actual
-        item.classList.toggle('active');
-
-        if (item.classList.contains('active')) {
-            content.style.maxHeight = content.scrollHeight + "px";
-        } else {
-            content.style.maxHeight = 0;
-        }
-    }
-
-    // Asegura que la barra lateral y el contenido principal se ajusten si el usuario redimensiona
-    window.addEventListener('resize', () => {
-        const sidebar = document.getElementById("mySidebar");
-        if (sidebar.style.width === sidebarWidth && window.innerWidth > 900) {
-             document.getElementById("main").style.marginLeft = sidebarWidth;
-        } else {
-             document.getElementById("main").style.marginLeft = "0";
-        }
-    });
-
-</script>
-
+        window.addEventListener('resize', resize);
+        
+        // Inicio del sistema
+        resize();
+        animate();
+    </script>
 </body>
-
 </html>
+
 
 
 
