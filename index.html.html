@@ -3,76 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vraxinor | Digital Entity System</title>
+    <title>Vraxinor | System Online</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     
     <style>
-        :root {
-            --primary: #FF0055;
-            --primary-dim: rgba(255, 0, 85, 0.2);
-            --cyan: #00F0FF;
-            --bg-dark: #050505;
-            --text-color: #e0e0e0;
-        }
-
-        /* RESET BÁSICO Y CORRECCIÓN DE PANTALLA BLANCA */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+        /* 1. ASEGURAR FONDO NEGRO INMEDIATO */
         html, body {
-            width: 100%;
             height: 100%;
-            background-color: var(--bg-dark); /* Color de seguridad inmediato */
-        }
-
-        body {
+            margin: 0;
+            padding: 0;
+            background-color: #050505; /* Negro profundo por defecto */
             font-family: 'Share Tech Mono', monospace;
-            color: var(--text-color);
+            color: #e0e0e0;
             overflow-x: hidden;
-            /* Degradado estático ligero para no cargar la GPU */
-            background: radial-gradient(circle at center, #15050a 0%, #000000 100%); 
         }
 
-        /* CAPAS (Z-INDEX) ORGANIZADAS PARA QUE NADA DESAPAREZCA */
+        /* 2. EL FONDO (CANVAS) SE VA ATRÁS A LA FUERZA */
         #neural-canvas {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 0; /* Al fondo */
-            pointer-events: none;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* Z-INDEX NEGATIVO: Se queda detrás de todo, sí o sí */
+            pointer-events: none; /* El click lo atraviesa */
         }
 
-        .scanlines {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.1));
-            background-size: 100% 4px;
-            z-index: 1; /* Encima del canvas */
-            pointer-events: none;
-            opacity: 0.3;
+        /* 3. VARIABLES DE COLOR */
+        :root {
+            --primary: #FF0055; /* Rosa Neón */
+            --cyan: #00F0FF;    /* Azul Cyber */
+            --glass: rgba(20, 20, 20, 0.8);
         }
 
-        /* BOTÓN MENÚ FLOTANTE */
+        /* BOTÓN MENÚ */
         .openbtn {
             position: fixed;
-            top: 20px; left: 20px;
-            z-index: 1000; /* Siempre visible */
-            width: 45px; height: 45px;
-            border-radius: 50%;
-            background: rgba(0, 0, 0, 0.8);
-            border: 1px solid var(--primary);
+            top: 20px;
+            left: 20px;
+            z-index: 1000; /* Muy por encima */
+            background: rgba(0,0,0,0.8);
             color: var(--primary);
-            font-size: 1.2rem;
+            border: 1px solid var(--primary);
+            width: 50px; height: 50px;
+            border-radius: 50%;
+            font-size: 1.5rem;
             cursor: pointer;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 10px rgba(255, 0, 85, 0.3);
-            transition: transform 0.2s;
         }
-        .openbtn:active { transform: scale(0.9); }
 
         /* SIDEBAR */
         .sidebar {
-            height: 100%; width: 0;
+            height: 100%;
+            width: 0;
             position: fixed;
-            z-index: 2000; /* Encima de todo */
-            top: 0
+            z-index: 2000;
+            top: 0;
+            left: 0;
+            background-color: #0a0a0a;
+            border-right: 2px solid var(--primary);
+            overflow-x: hidden;
+            transition: 0.3s;
+            padding-top: 60px;
+            white-space: nowrap;
+        }
+        .sidebar a {
+            padding: 15px 20px;
+            text-decoration: none;
+            font-size: 1.2rem;
+            color: #888;
+            display: block;
+            transition: 0.2s;
+        }
+        .sidebar a:hover { color: #fff; background: var(--primary); }
+        .closebtn {
+            position: absolute; top: 0; right: 20px; font-size: 36px; margin-left: 50px; color: var(--primary); cursor: pointer;
+        }
+
+        /* CONTENIDO PRINCIPAL */
+        #main {
+            position: relative;
+            z-index: 1; /* Encima del canvas (-1) */
+            transition: margin-left .3s;
+            padding: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* TARJETAS */
+        .card {
+            background
