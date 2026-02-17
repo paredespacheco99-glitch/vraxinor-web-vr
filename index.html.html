@@ -15,85 +15,64 @@
             --cyan: #00F0FF;
             --bg-dark: #050505;
             --text-color: #e0e0e0;
-            --glass: rgba(10, 10, 10, 0.6);
         }
 
+        /* RESET BÁSICO Y CORRECCIÓN DE PANTALLA BLANCA */
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        html, body {
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-dark); /* Color de seguridad inmediato */
+        }
 
         body {
             font-family: 'Share Tech Mono', monospace;
-            background-color: var(--bg-dark);
             color: var(--text-color);
             overflow-x: hidden;
-            background: radial-gradient(circle at center, #11050a 0%, #000000 100%);
-            scroll-behavior: smooth;
+            /* Degradado estático ligero para no cargar la GPU */
+            background: radial-gradient(circle at center, #15050a 0%, #000000 100%); 
         }
 
-        /* EFECTO CRT / SCANLINES (Sutil) */
+        /* CAPAS (Z-INDEX) ORGANIZADAS PARA QUE NADA DESAPAREZCA */
+        #neural-canvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0; /* Al fondo */
+            pointer-events: none;
+        }
+
         .scanlines {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.1));
             background-size: 100% 4px;
-            z-index: 9000;
+            z-index: 1; /* Encima del canvas */
             pointer-events: none;
-            opacity: 0.4;
-        }
-        
-        /* FONDO DE RED NEURAL */
-        #neural-canvas {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1;
+            opacity: 0.3;
         }
 
-        /* BOTÓN DE MENÚ LIMPIO Y FLOTANTE */
+        /* BOTÓN MENÚ FLOTANTE */
         .openbtn {
             position: fixed;
-            top: 25px;
-            left: 25px;
-            z-index: 1500;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%; /* Redondo */
-            background: rgba(0, 0, 0, 0.6);
+            top: 20px; left: 20px;
+            z-index: 1000; /* Siempre visible */
+            width: 45px; height: 45px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.8);
             border: 1px solid var(--primary);
             color: var(--primary);
             font-size: 1.2rem;
             cursor: pointer;
-            backdrop-filter: blur(5px);
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 15px rgba(255, 0, 85, 0.2);
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 10px rgba(255, 0, 85, 0.3);
+            transition: transform 0.2s;
         }
+        .openbtn:active { transform: scale(0.9); }
 
-        .openbtn:hover {
-            background: var(--primary);
-            color: white;
-            transform: scale(1.1);
-            box-shadow: 0 0 25px var(--primary);
-        }
-
-        /* SIDEBAR ESTILO HUD */
+        /* SIDEBAR */
         .sidebar {
-            height: 100%;
-            width: 0;
+            height: 100%; width: 0;
             position: fixed;
-            z-index: 2000;
-            top: 0;
-            left: 0;
-            background: rgba(5, 5, 5, 0.95);
-            backdrop-filter: blur(15px);
-            overflow-x: hidden;
-            transition: 0.4s cubic-bezier(0.19, 1, 0.22, 1); /* Animación muy suave */
-            padding-top: 80px;
-            border-right: 1px solid var(--primary);
-            box-shadow: 50px 0 100px rgba(0,0,0,0.5);
-        }
-
-        .sidebar a {
-            padding: 15px 30px;
-            text-decoration: none;
-            font-size:
+            z-index: 2000; /* Encima de todo */
+            top: 0
